@@ -1,0 +1,1501 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A personal developer trivia quiz about Atibali Saiyed. Discover his skills, projects, mindset, and engineering philosophy through an interactive experience designed to test how well you really know him."
+    />
+
+    <meta
+      name="keywords"
+      content="Atibali Saiyed, Developer Quiz, Know Me Quiz, Software Developer Profile, Personal Trivia Page, Developer Identity, Java Developer, Python Developer, System Design, Interactive About Me"
+    />
+
+    <meta name="author" content="Atibali Saiyed" />
+
+    <meta
+      property="og:title"
+      content="Do You Really Know Me? | Atibali Saiyed Developer Quiz"
+    />
+
+    <meta
+      property="og:description"
+      content="An interactive trivia quiz about Atibali Saiyed — explore his skills, projects, and mindset by answering questions instead of reading a profile."
+    />
+
+    <meta property="og:type" content="website" />
+
+    <meta name="robots" content="index, follow" />
+
+    <title>Do You Really Know Me? | Atibali Saiyed Developer Trivia Quiz</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --backend-primary: #00f7b0; /* brightest green a backend */
+        --system-accent: #6efff0; /* ice a system design */
+        --ai-secondary: #b284ff; /* violet a AI (softer) */
+        --security-tertiary: #ff9f4b; /* orange a security, less intense */
+        --neural-pink: #ff3ca6; /* kept for small accents */
+        --carbon-bg: #0c0f0e;
+        --panel-bg: rgba(8, 20, 16, 0.85);
+        --glow-backend: rgba(0, 247, 176, 0.45);
+        --glow-system: rgba(110, 255, 240, 0.3);
+        --glow-ai: rgba(178, 132, 255, 0.2);
+        --glow-security: rgba(255, 159, 75, 0.15);
+        --border-backend: 1.5px solid rgba(0, 247, 176, 0.7);
+        --border-system: 1.5px solid rgba(110, 255, 240, 0.5);
+      }
+
+      body {
+        background-color: var(--carbon-bg);
+        color: #e0f2e9;
+        font-family: "Inter", sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      .crt-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 247, 176, 0.01) 0px,
+          rgba(0, 0, 0, 0.1) 2px,
+          transparent 3px
+        );
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      canvas#matrixCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.25;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        position: relative;
+        z-index: 10;
+      }
+
+      /* ===== PERSONAL HEADER ===== */
+      .identity-core {
+        background: rgba(0, 20, 16, 0.8);
+        backdrop-filter: blur(12px);
+        border: var(--border-backend);
+        box-shadow: 0 0 30px var(--glow-backend);
+        border-radius: 32px;
+        padding: 2rem 2.2rem;
+        margin-bottom: 2.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .identity-title {
+        font-family: "Orbitron", sans-serif;
+        font-size: 3.4rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00f7b0, #6efff0, #b284ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        letter-spacing: 4px;
+        text-shadow: 0 0 15px #00f7b0;
+      }
+
+      .sub {
+        font-size: 1.2rem;
+        color: var(--system-accent);
+        margin-top: 0.5rem;
+        font-weight: 300;
+        border-left: 4px solid var(--neural-pink);
+        padding-left: 16px;
+      }
+
+      .badge-cluster {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        background: rgba(0, 247, 176, 0.08);
+        border: 1px solid var(--backend-primary);
+        border-radius: 40px;
+        padding: 10px 22px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--backend-primary);
+        transition: 0.25s;
+      }
+      .badge i {
+        margin-right: 8px;
+      }
+      .badge:hover {
+        background: var(--backend-primary);
+        color: #0a1a1a;
+        box-shadow: 0 0 20px #00f7b0;
+        border-color: white;
+      }
+
+      /* ===== MAIN QUIZ GRID ===== */
+      .mission-grid {
+        display: grid;
+        grid-template-columns: 2.3fr 1.2fr;
+        gap: 28px;
+      }
+
+      @media (max-width: 1000px) {
+        .mission-grid {
+          grid-template-columns: 1fr;
+        }
+        .identity-title {
+          font-size: 2.5rem;
+        }
+      }
+
+      .quiz-module {
+        background: var(--panel-bg);
+        backdrop-filter: blur(16px);
+        border: 1.5px solid var(--system-accent); /* system border */
+        border-radius: 36px;
+        padding: 2rem;
+        box-shadow: 0 0 40px var(--glow-system);
+      }
+
+      .module-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px dashed var(--system-accent);
+        padding-bottom: 1.4rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .module-title {
+        font-family: "Orbitron", sans-serif;
+        font-size: 2rem;
+        background: linear-gradient(145deg, #00f7b0, #6efff0);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .difficulty-panel {
+        display: flex;
+        gap: 8px;
+      }
+      .diff-btn {
+        background: transparent;
+        border: 2px solid;
+        padding: 10px 22px;
+        border-radius: 40px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 1.5px;
+        cursor: pointer;
+        transition: 0.25s;
+        font-family: "Orbitron", sans-serif;
+      }
+      .diff-easy {
+        border-color: #00f7b0;
+        color: #00f7b0;
+      }
+      .diff-medium {
+        border-color: #6efff0;
+        color: #6efff0;
+      }
+      .diff-hard {
+        border-color: #ff9f4b;
+        color: #ff9f4b;
+      }
+      .diff-master {
+        border-color: #ff3ca6;
+        color: #ff3ca6;
+      }
+      .diff-btn.active {
+        background: currentColor !important;
+        color: #0a1a1a !important;
+        box-shadow: 0 0 20px currentColor;
+      }
+
+      /* stats */
+      .stat-dashboard {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+      .stat-tile {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(110, 255, 240, 0.5);
+        border-radius: 20px;
+        padding: 1.2rem 0.8rem;
+        text-align: center;
+        backdrop-filter: blur(4px);
+      }
+      .stat-number {
+        font-size: 2.4rem;
+        font-weight: 800;
+        font-family: "Orbitron", sans-serif;
+        color: var(--backend-primary);
+        text-shadow: 0 0 10px #00f7b0;
+        line-height: 1;
+      }
+
+      /* question panel */
+      .question-pane {
+        background: #04100e;
+        border: 2px solid var(--backend-primary); /* backend primary border */
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        position: relative;
+        box-shadow: 0 0 25px var(--glow-backend);
+      }
+      .category-chip {
+        position: absolute;
+        top: -16px;
+        left: 28px;
+        background: #0c0f0e;
+        padding: 8px 24px;
+        border-radius: 40px;
+        border: 2px solid;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+        font-family: "Orbitron", sans-serif;
+      }
+      .cat-cyber {
+        border-color: var(--security-tertiary);
+        color: var(--security-tertiary);
+      }
+      .cat-ai {
+        border-color: var(--ai-secondary);
+        color: var(--ai-secondary);
+      }
+      .cat-sys {
+        border-color: var(--system-accent);
+        color: var(--system-accent);
+      }
+      .cat-dev {
+        border-color: var(--backend-primary);
+        color: var(--backend-primary);
+      }
+      .cat-artsea {
+        border-color: #ffd166;
+        color: #ffd166;
+      }
+      .cat-personal {
+        border-color: #ff7f7f;
+        color: #ff7f7f;
+      }
+      .cat-core {
+        border-color: #ff3ca6;
+        color: #ff3ca6;
+      } /* personal core */
+
+      .question-text {
+        font-size: 1.9rem;
+        font-weight: 600;
+        line-height: 1.3;
+        margin-bottom: 0.8rem;
+        color: #f0fff0;
+      }
+
+      .hint-area {
+        font-size: 1.1rem;
+        color: var(--neural-pink);
+        font-style: italic;
+        margin-top: 12px;
+        border-top: 1px dashed var(--neural-pink);
+        padding-top: 16px;
+      }
+
+      /* options */
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+      .opt {
+        background: rgba(20, 40, 45, 0.7);
+        border: 2px solid rgba(110, 255, 240, 0.2);
+        border-radius: 20px;
+        padding: 1.6rem 1rem;
+        font-size: 1.2rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: 0.25s;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+        color: #d0f0e0;
+      }
+      .opt:hover {
+        border-color: var(--system-accent);
+        background: rgba(110, 255, 240, 0.1);
+        transform: translateY(-3px);
+      }
+      .opt-letter {
+        background: var(--ai-secondary);
+        color: black;
+        font-weight: 900;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+      .opt.correct-answer {
+        background: rgba(0, 247, 176, 0.2);
+        border-color: #00f7b0;
+        color: #c0ffe0;
+      }
+      .opt.wrong-answer {
+        background: rgba(255, 60, 166, 0.2);
+        border-color: #ff3ca6;
+      }
+      .opt.disabled {
+        pointer-events: none;
+        opacity: 0.9;
+      }
+
+      .action-row {
+        display: flex;
+        gap: 24px;
+      }
+      .action-btn {
+        flex: 1;
+        padding: 1.2rem;
+        border-radius: 40px;
+        border: none;
+        font-size: 1.2rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: 0.2s;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(6px);
+        font-family: "Orbitron", sans-serif;
+      }
+      .hint-act {
+        border: 2px solid var(--ai-secondary);
+        color: var(--ai-secondary);
+      }
+      .next-act {
+        background: linear-gradient(145deg, #00f7b0, #6efff0);
+        color: #0a2a2a;
+        font-weight: 800;
+        border: none;
+      }
+      .action-btn:disabled {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
+      /* side panel */
+      .side-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      .profile-deep {
+        background: var(--panel-bg);
+        backdrop-filter: blur(16px);
+        border: 1.5px solid var(--backend-primary);
+        border-radius: 28px;
+        padding: 2rem;
+        box-shadow: 0 0 30px var(--glow-backend);
+      }
+      .tech-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .tech-item {
+        background: #101f1c;
+        padding: 10px 20px;
+        border-radius: 30px;
+        border: 1px solid var(--backend-primary);
+        color: var(--backend-primary);
+        font-size: 0.9rem;
+      }
+
+      /* SKILL BARS reordered: backend first, then system, AI, security */
+      .skill-bars {
+        background: var(--panel-bg);
+        border: 1.5px solid var(--system-accent);
+        border-radius: 28px;
+        padding: 2rem;
+      }
+      .progress-block {
+        margin-bottom: 1.4rem;
+      }
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .bar-bg {
+        height: 12px;
+        background: #16211f;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        width: 0%;
+        border-radius: 10px;
+        transition: width 0.4s ease;
+      }
+      /* backend gets brightest */
+      #devBar {
+        background: linear-gradient(90deg, #00f7b0, #6efff0);
+        box-shadow: 0 0 12px #00f7b0;
+      }
+      #sysBar {
+        background: linear-gradient(90deg, #6efff0, #5fd9d0);
+        box-shadow: 0 0 8px #6efff0;
+      }
+      #aiBar {
+        background: linear-gradient(90deg, #b284ff, #9b6bdb);
+        box-shadow: 0 0 4px #b284ff;
+      }
+      #secBar {
+        background: linear-gradient(90deg, #ff9f4b, #e08b40);
+        box-shadow: 0 0 2px #ff9f4b;
+      }
+
+      .achievement-array {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+      .achieve-badge {
+        background: #0c2320;
+        border: 1px solid var(--ai-secondary);
+        border-radius: 20px;
+        padding: 16px;
+        text-align: center;
+        transition: 0.2s;
+        cursor: pointer;
+      }
+      .achieve-badge i {
+        font-size: 2rem;
+        color: var(--backend-primary);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(2, 10, 8, 0.95);
+        backdrop-filter: blur(12px);
+        z-index: 300;
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-card {
+        max-width: 700px;
+        width: 90%;
+        background: #0c1f1c;
+        border: 3px solid var(--backend-primary);
+        border-radius: 48px;
+        padding: 3rem 2.5rem;
+        text-align: center;
+        box-shadow: 0 0 90px var(--glow-backend);
+      }
+      .modal-title {
+        font-size: 3rem;
+        font-family: "Orbitron", sans-serif;
+        background: linear-gradient(45deg, #00f7b0, #6efff0, #b284ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .final-rank {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #00f7b0;
+        margin: 20px 0;
+      }
+      .restart-btn {
+        margin-top: 30px;
+        padding: 18px 30px;
+        background: transparent;
+        border: 2px solid #00f7b0;
+        color: #00f7b0;
+        border-radius: 50px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      @keyframes pulse-glitch {
+        0% {
+          opacity: 0.9;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="matrixCanvas"></canvas>
+    <div class="crt-overlay"></div>
+
+    <div class="container">
+      <!-- HEADER a updated tagline -->
+      <header class="identity-core">
+        <div>
+          <span class="identity-title">ATIBALI SAIYED</span>
+          <div class="sub">
+            <i class="fas fa-shield-hal"></i> Backend Systems . Software
+            Engineering . Scalable Architectures
+          </div>
+        </div>
+        <div class="badge-cluster">
+          <span class="badge"><i class="fas fa-bug"></i> BUGNEST</span>
+          <span class="badge"><i class="fas fa-robot"></i> LET'S BUNK</span>
+          <span class="badge"><i class="fas fa-palette"></i> ARTSEA</span>
+          <span class="badge"><i class="fas fa-water"></i> AQUA MONITOR</span>
+        </div>
+      </header>
+
+      <!-- MISSION GRID -->
+      <div class="mission-grid">
+        <!-- LEFT a QUIZ ENGINE -->
+        <div class="quiz-module">
+          <div class="module-header">
+            <h2 class="module-title">
+              <i class="fas fa-crown" style="color: #ff9f4b"></i> BACKENDATRIVIA
+            </h2>
+            <div class="difficulty-panel" id="difficultyGroup">
+              <button class="diff-btn diff-easy" onclick="changeDiff('easy')">
+                NOVICE
+              </button>
+              <button
+                class="diff-btn diff-medium active"
+                onclick="changeDiff('medium')"
+              >
+                ADEPT
+              </button>
+              <button class="diff-btn diff-hard" onclick="changeDiff('hard')">
+                EXPERT
+              </button>
+              <button
+                class="diff-btn diff-master"
+                onclick="changeDiff('master')"
+              >
+                MASTER
+              </button>
+            </div>
+          </div>
+
+          <!-- STATS -->
+          <div class="stat-dashboard">
+            <div class="stat-tile">
+              <span class="stat-number" id="scoreDisplay">0</span>
+              <div style="font-size: 0.8rem">SCORE</div>
+            </div>
+            <div class="stat-tile">
+              <span class="stat-number" id="qCountDisplay">1/8</span>
+              <div>QUEST</div>
+            </div>
+            <div class="stat-tile">
+              <span class="stat-number" id="streakDisplay">0</span>
+              <div>STREAK</div>
+            </div>
+            <div class="stat-tile">
+              <span class="stat-number" id="timerDisplay">30</span>
+              <div>TIME LEFT</div>
+            </div>
+          </div>
+
+          <!-- QUESTION -->
+          <div class="question-pane">
+            <div class="category-chip cat-sys" id="categoryChip">BACKEND</div>
+            <!-- default sys/dev -->
+            <div class="question-text" id="questionMain">loading core ...</div>
+            <div class="hint-area" id="hintBox"></div>
+          </div>
+
+          <!-- OPTIONS GRID -->
+          <div class="options-grid" id="optionsGrid"></div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="action-row">
+            <button class="action-btn hint-act" onclick="useHint()">
+              <i class="fas fa-lightbulb"></i> DECRYPT HINT
+            </button>
+            <button
+              class="action-btn next-act"
+              onclick="proceedNext()"
+              id="nextBtn"
+            >
+              <i class="fas fa-arrow-right"></i> EXECUTE
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT a BIO & PROGRESS -->
+        <div class="side-panel">
+          <div class="profile-deep">
+            <h3
+              style="
+                font-family: &quot;Orbitron&quot;;
+                color: #00f7b0;
+                font-size: 1.8rem;
+              "
+            >
+              <i class="fas fa-microchip"></i> CORE PROFILE
+            </h3>
+            <p style="margin-top: 12px; font-size: 1.1rem">
+              I’m a software developer focused on building scalable,
+              production-ready systems and reliable applications. Skilled in
+              Java, Python, and system design, I develop clean architectures and
+              well-structured APIs. I treat AI and security as engineering tools
+              that enhance software robustness rather than standalone domains.
+            </p>
+            <div class="tech-cloud">
+              <span class="tech-item">Java</span>
+              <span class="tech-item">Spring Boot</span>
+              <span class="tech-item">System Design</span>
+              <span class="tech-item">Python</span>
+              <span class="tech-item">REST APIs</span>
+              <span class="tech-item">Hibernate</span>
+              <span class="tech-item">Machine Learning</span>
+              <span class="tech-item">PQC</span>
+              <span class="tech-item">NPTEL (Networks/SE)</span>
+            </div>
+          </div>
+
+          <!-- SKILL MATRIX reordered-->
+          <div class="skill-bars">
+            <h3
+              style="
+                font-family: &quot;Orbitron&quot;;
+                color: #6efff0;
+                margin-bottom: 26px;
+              "
+            >
+              <i class="fas fa-chart-line"></i> SKILL MATRIX
+            </h3>
+            <div class="progress-block">
+              <div class="progress-label">
+                <span>BACKEND / DEV</span> <span id="devPercent">0%</span>
+              </div>
+              <div class="bar-bg">
+                <div class="bar-fill" id="devBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="progress-block">
+              <div class="progress-label">
+                <span>SYSTEM DESIGN</span> <span id="sysPercent">0%</span>
+              </div>
+              <div class="bar-bg">
+                <div class="bar-fill" id="sysBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="progress-block">
+              <div class="progress-label">
+                <span>SYSTEMS</span> <span id="aiPercent">0%</span>
+              </div>
+              <div class="bar-bg">
+                <div class="bar-fill" id="aiBar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="progress-block">
+              <div class="progress-label">
+                <span>SECURITY</span> <span id="secPercent">0%</span>
+              </div>
+              <div class="bar-bg">
+                <div class="bar-fill" id="secBar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PERSONAL ACHIEVEMENTS -->
+          <div class="achievement-array">
+            <div class="achieve-badge" onclick="showFact('iit')">
+              <i class="fas fa-university"></i>
+              <div>IIT Courses</div>
+            </div>
+            <div class="achieve-badge" onclick="showFact('bugnest')">
+              <i class="fas fa-bug"></i>
+              <div>BugNest</div>
+            </div>
+            <div class="achieve-badge" onclick="showFact('letsbunk')">
+              <i class="fas fa-robot"></i>
+              <div>Let's Bunk</div>
+            </div>
+            <div class="achieve-badge" onclick="showFact('iot')">
+              <i class="fas fa-water"></i>
+              <div>Aqua Monitor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="resultModal" class="modal">
+      <div class="modal-card">
+        <div class="modal-title" id="resultTitle">MISSION STATUS</div>
+        <div
+          style="font-size: 3rem; font-weight: 900; color: #6efff0"
+          id="finalScore"
+        >
+          0
+        </div>
+        <div class="final-rank" id="rankBadge">INITIATE</div>
+        <p style="font-size: 1.3rem" id="resultMsg">completed</p>
+        <button class="restart-btn" onclick="restartQuiz()">
+          <i class="fas fa-rotate"></i> RE-INITIALIZE
+        </button>
+        <button
+          class="restart-btn"
+          style="border-color: #ff9f4b; color: #ff9f4b"
+          onclick="copyResults()"
+        >
+          <i class="fas fa-share"></i> SHARE
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // ============  UPDATED QUIZ of ATIBALI SAIYED ===============
+      const quizDB = {
+        easy: [
+          {
+            q: "Which IIT offered Atibali's short course on PQC?",
+            opts: ["IIT Bombay", "IIT Bhubaneswar", "IIT Delhi", "IIT Madras"],
+            corr: 1,
+            cat: "cyber",
+            hint: "IIT Bhubaneswar short course on PQC",
+          },
+          {
+            q: "What's the primary stack of BugNest?",
+            opts: [
+              "Django + MySQL",
+              "Spring Boot + React",
+              "PHP + jQuery",
+              "Flask + MongoDB",
+            ],
+            corr: 1,
+            cat: "dev",
+            hint: "Enterprise Java + frontend library",
+          },
+          {
+            q: "What does Let's Bunk primarily use AI for?",
+            opts: [
+              "Recommending relevant tech events for students",
+              "Validating student certificates",
+              "Monitoring classroom attendance",
+              "Automating exam evaluation",
+            ],
+            corr: 0,
+            cat: "ai",
+            hint: "It helps students discover opportunities",
+          },
+          {
+            q: "Atibali's IoT project monitors ... ?",
+            opts: [
+              "Air quality",
+              "Water quality",
+              "Energy usage",
+              "Soil moisture",
+            ],
+            corr: 1,
+            cat: "sys",
+            hint: "Hardware + real-time dashboard",
+          },
+        ],
+        medium: [
+          {
+            q: "Atibali's IIT Kharagpur NPTEL course was in ... ?",
+            opts: [
+              "Cyber Forensics",
+              "Networks / Software Engineering",
+              "Cloud Computing",
+              "Blockchain",
+            ],
+            corr: 1,
+            cat: "cyber",
+            hint: "NPTEL course: Networks/SE",
+          },
+          {
+            q: "Which principle does Atibali emphasize in architecture?",
+            opts: [
+              "Waterfall",
+              "SOLID & evolutionary design",
+              "Microservices only",
+              "Serverless",
+            ],
+            corr: 1,
+            cat: "sys",
+            hint: "Five principles for maintainable code",
+          },
+          {
+            q: "What non tech fields complement his work?",
+            opts: [
+              "Psychology, business, finance",
+              "Only mathematics",
+              "History",
+              "Philosophy only",
+            ],
+            corr: 0,
+            cat: "ai",
+            hint: "human behaviour + models",
+          },
+          {
+            q: "BugNest architecture is best described as?",
+            opts: [
+              "Monolithic",
+              "Scalable backend + structured workflows",
+              "SPA only",
+              "No DB",
+            ],
+            corr: 1,
+            cat: "dev",
+            hint: "Jira-style but custom",
+          },
+        ],
+        hard: [
+          {
+            q: "Atibali's security philosophy: security is ... ?",
+            opts: [
+              "An optional layer",
+              "A core mindset, not feature",
+              "Only network firewalls",
+              "User's responsibility",
+            ],
+            corr: 1,
+            cat: "cyber",
+            hint: "Deep integration",
+          },
+          {
+            q: "Which two IITs are linked to Atibali's training?",
+            opts: [
+              "Bombay & Delhi",
+              "Bhubaneswar & Kharagpur",
+              "Madras & Guwahati",
+              "Roorkee & BHU",
+            ],
+            corr: 1,
+            cat: "sys",
+            hint: "PQC short course + NPTEL Networks/SE",
+          },
+          {
+            q: "How does Let's Bunk support students in gaining attendance benefits?",
+            opts: [
+              "By generating attendance automatically",
+              "By recommending tech events where participation may count for attendance",
+              "By replacing the college attendance system",
+              "By verifying student certificates",
+            ],
+            corr: 1,
+            cat: "ai",
+            hint: "It guides students to useful events",
+          },
+          {
+            q: "Atibali's problem-solving triad?",
+            opts: [
+              "Code + Test + Deploy",
+              "Tech + Security + Human",
+              "Frontend + Backend + DB",
+              "Research + Write + Ship",
+            ],
+            corr: 1,
+            cat: "sys",
+            hint: "Interdisciplinary",
+          },
+        ],
+        master: [
+          {
+            q: "PostaQuantum Cryptography interest combines ... ?",
+            opts: [
+              "RSA + AES",
+              "Classical + future-proof crypto",
+              "Quantum key distribution only",
+              "Hash functions",
+            ],
+            corr: 1,
+            cat: "cyber",
+            hint: "Both current and quantum-resistant",
+          },
+          {
+            q: "Atibali's approach to complex problems?",
+            opts: [
+              "Divide into scalable solutions",
+              "Outsource",
+              "Quick patch",
+              "Rewrite entirely",
+            ],
+            corr: 0,
+            cat: "sys",
+            hint: "Break, simplify, scale",
+          },
+          {
+            q: "The IoT Water Monitoring Project was primarily built using which hardware platform?",
+            opts: [
+              "Arduino Uno R3",
+              "Raspberry Pi Cluster",
+              "ESP32 Mesh Network",
+              "PLC Controller",
+            ],
+            corr: 0,
+            cat: "dev",
+            hint: "Microcontroller board commonly used in student IoT projects",
+          },
+          {
+            q: "What short course did Atibali complete at IIT Bhubaneswar?",
+            opts: [
+              "Cyber Law",
+              "PostaQuantum Crypto (PQC)",
+              "VLSI",
+              "Robotics",
+            ],
+            corr: 1,
+            cat: "cyber",
+            hint: "Short course on PQC",
+          },
+        ],
+      };
+
+    
+      const artSeaQuestions = [
+        {
+          q: "What is the main purpose of the ArtSea platform?",
+          opts: [
+            "Selling digital courses",
+            "Conducting online art auctions",
+            "Streaming art tutorials",
+            "Managing museum collections",
+          ],
+          corr: 1,
+          cat: "artsea",
+          hint: "It connects artists and buyers through auctions",
+        },
+        {
+          q: "Which technology enables real-time bidding in ArtSea?",
+          opts: [
+            "REST polling",
+            "WebSockets",
+            "FTP protocol",
+            "Server-side rendering only",
+          ],
+          corr: 1,
+          cat: "artsea",
+          hint: "Allows instant bid updates without refreshing",
+        },
+        {
+          q: "What happens automatically when an auction time ends in ArtSea?",
+          opts: [
+            "Auction pauses until admin approval",
+            "Highest bidder is declared winner",
+            "Artwork is removed permanently",
+            "Bids are reset to base price",
+          ],
+          corr: 1,
+          cat: "artsea",
+          hint: "System automation ensures transparency",
+        },
+        {
+          q: "Which combination best describes ArtSea's architecture?",
+          opts: [
+            "Static frontend with manual database scripts",
+            "Spring Boot backend, Thymeleaf views, Hibernate ORM, MySQL database",
+            "Node.js microservices with MongoDB only",
+            "Mobile-only Flutter app with Firebase",
+          ],
+          corr: 1,
+          cat: "artsea",
+          hint: "Think Java full-stack MVC architecture",
+        },
+      ];
+
+      const personalQuestions = [
+        {
+          q: "From which college did Atibali complete his Diploma?",
+          opts: [
+            "Government Polytechnic Ahmedabad",
+            "Shri KJ Polytechnic",
+            "LD College of Engineering",
+            "Silver Oak Polytechnic",
+          ],
+          corr: 1,
+          cat: "personal",
+          hint: "Located in Bharuch",
+        },
+        {
+          q: "At which university is Atibali currently pursuing his B.Tech?",
+          opts: [
+            "GTU",
+            "Nirma University",
+            "CHARUSAT University",
+            "MS University Vadodara",
+          ],
+          corr: 2,
+          cat: "personal",
+          hint: "Known for engineering programs in Anand",
+        },
+        {
+          q: "What type of discussions does Atibali like the most?",
+          opts: [
+            "Celebrity gossip",
+            "Deep talks about society, history, or human behavior",
+            "Only sports debates",
+            "Meme sharing",
+          ],
+          corr: 1,
+          cat: "personal",
+          hint: "Meaningful conversations",
+        },
+        {
+          q: "What kind of growth matters most to Atibali?",
+          opts: [
+            "Social media popularity",
+            "Continuous personal and intellectual growth",
+            "Short-term success only",
+            "Luck-based achievements",
+          ],
+          corr: 1,
+          cat: "personal",
+          hint: "Always learning",
+        },
+      ];
+
+      const recipeAiQuestions = [
+        {
+          q: "What is the primary function of the Smart Recipe Improviser?",
+          opts: [
+            "Ordering food from restaurants",
+            "Generating recipes from random text",
+            "Adapting real recipes based on available pantry ingredients",
+            "Tracking grocery store discounts",
+          ],
+          corr: 2,
+          cat: "ai",
+          hint: "It transforms what you already have into meals",
+        },
+        {
+          q: "How does the system help when some ingredients are missing?",
+          opts: [
+            "It deletes the recipe completely",
+            "It suggests intelligent ingredient substitutions",
+            "It forces the user to buy the missing items",
+            "It switches to unrelated recipes",
+          ],
+          corr: 1,
+          cat: "ai",
+          hint: "Think flexibility in cooking",
+        },
+      ];
+
+      const difficultyAddons = {
+        easy: [
+          artSeaQuestions[0],
+          artSeaQuestions[1],
+          personalQuestions[0],
+          recipeAiQuestions[0],
+        ],
+        medium: [
+          artSeaQuestions[2],
+          recipeAiQuestions[1],
+          personalQuestions[1],
+          personalQuestions[2],
+        ],
+        hard: [
+          artSeaQuestions[3],
+          recipeAiQuestions[1],
+          personalQuestions[0],
+          personalQuestions[3],
+        ],
+        master: [
+          artSeaQuestions[3],
+          recipeAiQuestions[0],
+          personalQuestions[1],
+          personalQuestions[2],
+        ],
+      };
+
+      for (let diff in quizDB) {
+        quizDB[diff].push(...difficultyAddons[diff]);
+      }
+
+      // GLOBAL STATE
+      let currentDifficulty = "medium";
+      let questions = [];
+      let curIndex = 0;
+      let score = 0;
+      let streak = 0;
+      let timer = 30;
+      let timerInterval = null;
+      let isAnswered = false;
+      let selectedIdx = null;
+      const QUESTIONS_PER_ROUND = 8;
+      const POINTS_MAP = { easy: 100, medium: 180, hard: 280, master: 400 };
+
+      // skill matrix
+      let skill = { security: 0, ai: 0, system: 0, backend: 0 };
+
+      // DOM refs
+      const questionEl = document.getElementById("questionMain");
+      const optsGrid = document.getElementById("optionsGrid");
+      const scoreEl = document.getElementById("scoreDisplay");
+      const qCountEl = document.getElementById("qCountDisplay");
+      const streakEl = document.getElementById("streakDisplay");
+      const timerEl = document.getElementById("timerDisplay");
+      const catChip = document.getElementById("categoryChip");
+      const hintBox = document.getElementById("hintBox");
+      const nextBtn = document.getElementById("nextBtn");
+      const secBar = document.getElementById("secBar"),
+        secPercent = document.getElementById("secPercent");
+      const aiBar = document.getElementById("aiBar"),
+        aiPercent = document.getElementById("aiPercent");
+      const sysBar = document.getElementById("sysBar"),
+        sysPercent = document.getElementById("sysPercent");
+      const devBar = document.getElementById("devBar"),
+        devPercent = document.getElementById("devPercent");
+
+      const modal = document.getElementById("resultModal");
+      const finalScoreEl = document.getElementById("finalScore");
+      const rankBadge = document.getElementById("rankBadge");
+      const resultMsg = document.getElementById("resultMsg");
+      const resultTitle = document.getElementById("resultTitle");
+
+      // ---------- helpers ----------
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          let j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function initRound() {
+        let pool = [...quizDB[currentDifficulty]];
+        questions = shuffle(pool).slice(0, QUESTIONS_PER_ROUND);
+        curIndex = 0;
+        score = 0;
+        streak = 0;
+        isAnswered = false;
+        selectedIdx = null;
+        resetSkills();
+        updateUI();
+        loadQuestion();
+        resetTimer();
+      }
+
+      function resetSkills() {
+        skill = { security: 0, ai: 0, system: 0, backend: 0 };
+        updateSkillBars();
+      }
+
+      function updateUI() {
+        scoreEl.innerText = Math.floor(score);
+        streakEl.innerText = streak;
+        qCountEl.innerText = `${curIndex + 1}/${questions.length}`;
+      }
+
+      function updateSkillBars() {
+        let s = Math.min(skill.security, 100);
+        secBar.style.width = s + "%";
+        secPercent.innerText = s + "%";
+        let a = Math.min(skill.ai, 100);
+        aiBar.style.width = a + "%";
+        aiPercent.innerText = a + "%";
+        let sy = Math.min(skill.system, 100);
+        sysBar.style.width = sy + "%";
+        sysPercent.innerText = sy + "%";
+        let b = Math.min(skill.backend, 100);
+        devBar.style.width = b + "%";
+        devPercent.innerText = b + "%";
+      }
+
+      function loadQuestion() {
+        if (!questions.length || curIndex >= questions.length) return;
+        isAnswered = false;
+        selectedIdx = null;
+        hintBox.innerText = "";
+        let q = questions[curIndex];
+        questionEl.innerText = q.q;
+        let cat = q.cat;
+        let chipText = {
+          cyber: "SECURITY",
+          ai: "AI",
+          sys: "SYSTEM",
+          dev: "BACKEND",
+          artsea: "ARTSEA",
+          personal: "PERSONAL",
+          core: "PERSONAL CORE",
+        };
+        catChip.innerText = chipText[cat] || cat.toUpperCase();
+        catChip.className = "category-chip cat-" + cat;
+
+        optsGrid.innerHTML = "";
+        q.opts.forEach((opt, idx) => {
+          let div = document.createElement("div");
+          div.className = "opt";
+          div.innerHTML = `<span class="opt-letter">${String.fromCharCode(65 + idx)}</span> ${opt}`;
+          div.onclick = () => handleAnswer(idx);
+          optsGrid.appendChild(div);
+        });
+
+        timer = 30;
+        timerEl.innerText = timer;
+        timerEl.style.color = "#00f7b0";
+        nextBtn.disabled = true;
+        nextBtn.style.opacity = "0.6";
+      }
+
+      function handleAnswer(idx) {
+        if (isAnswered) return;
+        let q = questions[curIndex];
+        let correct = q.corr;
+        let options = document.querySelectorAll(".opt");
+        isAnswered = true;
+        selectedIdx = idx;
+        options.forEach((opt, i) => {
+          opt.classList.add("disabled");
+          if (i === correct) opt.classList.add("correct-answer");
+          else if (i === idx && i !== correct)
+            opt.classList.add("wrong-answer");
+        });
+        if (idx === correct) {
+          score += POINTS_MAP[currentDifficulty] * (streak >= 2 ? 1.2 : 1);
+          streak += 1;
+          if (q.cat === "cyber")
+            skill.security = Math.min(skill.security + 15, 100);
+          if (q.cat === "ai") skill.ai = Math.min(skill.ai + 15, 100);
+          if (q.cat === "sys") skill.system = Math.min(skill.system + 15, 100);
+          if (q.cat === "dev")
+            skill.backend = Math.min(skill.backend + 15, 100);
+          if (q.cat === "artsea") {
+            skill.backend = Math.min(skill.backend + 10, 100);
+            skill.system = Math.min(skill.system + 10, 100);
+          }
+          if (q.cat === "personal") {
+            skill.system = Math.min(skill.system + 10, 100);
+            skill.ai = Math.min(skill.ai + 10, 100);
+          }
+          if (q.cat === "core") {
+            // personal core adds to all? just backend/system focus
+            skill.backend = Math.min(skill.backend + 8, 100);
+            skill.system = Math.min(skill.system + 8, 100);
+          }
+        } else {
+          streak = 0;
+        }
+        scoreEl.innerText = Math.floor(score);
+        streakEl.innerText = streak;
+        hintBox.innerText = `HINT: ${q.hint}`;
+        updateSkillBars();
+        clearInterval(timerInterval);
+        nextBtn.disabled = false;
+        nextBtn.style.opacity = "1";
+      }
+
+      function resetTimer() {
+        clearInterval(timerInterval);
+        timer = 30;
+        timerEl.innerText = timer;
+        timerInterval = setInterval(() => {
+          timer--;
+          timerEl.innerText = timer;
+          if (timer <= 10) timerEl.style.color = "#ff3ca6";
+          if (timer <= 0) {
+            clearInterval(timerInterval);
+            if (!isAnswered) {
+              let q = questions[curIndex];
+              let opts = document.querySelectorAll(".opt");
+              opts.forEach((o, i) => {
+                o.classList.add("disabled");
+                if (i === q.corr) o.classList.add("correct-answer");
+              });
+              isAnswered = true;
+              hintBox.innerText = `a TIMEOUT! ${q.hint}`;
+              streak = 0;
+              streakEl.innerText = 0;
+              nextBtn.disabled = false;
+            }
+          }
+        }, 1000);
+      }
+
+      function proceedNext() {
+        if (!isAnswered) {
+          alert("as i  select an answer or wait for timeout");
+          return;
+        }
+        clearInterval(timerInterval);
+        if (curIndex + 1 < questions.length) {
+          curIndex++;
+          loadQuestion();
+          resetTimer();
+          updateUI();
+          nextBtn.disabled = true;
+        } else {
+          showFinal();
+        }
+      }
+
+      function showFinal() {
+        clearInterval(timerInterval);
+        finalScoreEl.innerText = Math.floor(score) + " XP";
+        let totalPossible = questions.length * POINTS_MAP[currentDifficulty];
+        let percent = Math.min((score / totalPossible) * 100, 100);
+        let rank = "";
+        let title = "";
+        if (percent >= 85) {
+          rank = "BACKEND ARCHITECT";
+          title = "SCALABLE MASTER";
+        } else if (percent >= 65) {
+          rank = "SYSTEM ENGINEER";
+          title = "CORE BUILDER";
+        } else if (percent >= 40) {
+          rank = "LOGICAL DESIGNER";
+          title = "SOLID FOUNDATION";
+        } else {
+          rank = "INITIATE";
+          title = "LEARN MODE";
+        }
+        rankBadge.innerText = rank;
+        resultTitle.innerText = "MISSION " + title;
+        resultMsg.innerText = `You solved ${Math.floor(percent)}% in this ${questions.length}-question ${currentDifficulty.toUpperCase()} set.`;
+        modal.style.display = "flex";
+      }
+
+      function restartQuiz() {
+        modal.style.display = "none";
+        initRound();
+      }
+
+      function changeDiff(diff) {
+        currentDifficulty = diff;
+        document
+          .querySelectorAll(".diff-btn")
+          .forEach((b) => b.classList.remove("active"));
+        if (diff === "easy")
+          document.querySelector(".diff-easy").classList.add("active");
+        if (diff === "medium")
+          document.querySelector(".diff-medium").classList.add("active");
+        if (diff === "hard")
+          document.querySelector(".diff-hard").classList.add("active");
+        if (diff === "master")
+          document.querySelector(".diff-master").classList.add("active");
+        initRound();
+      }
+
+      function useHint() {
+        if (questions[curIndex]) alert("DECRYPT: " + questions[curIndex].hint);
+      }
+
+      function showFact(type) {
+        if (type === "iit")
+          alert(
+            "IIT Bhubaneswar Short Course on PQC + IIT Kharagpur NPTEL Course (Networks/SE)",
+          );
+        if (type === "bugnest")
+          alert(
+            "BugNest: enterprise workflow engine, role-based auth, custom issue tracker - Spring Boot/React",
+          );
+        if (type === "letsbunk")
+          alert(
+            "Let's Bunk: AI certificate verification, smart validation, used by 500+ students",
+          );
+        if (type === "iot")
+          alert("Real-time water quality monitoring: pH and turbidity");
+      }
+
+      function copyResults() {
+        let text = `Atibali Core Quiz - ${rankBadge.innerText} | Score: ${finalScoreEl.innerText}`;
+        navigator.clipboard.writeText(text);
+        alert("Results copied");
+      }
+
+      // Matrix BG
+      const canvas = document.getElementById("matrixCanvas");
+      const ctx = canvas.getContext("2d");
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+      const letters = "01 ATIBALI JAVA SPRING SYSTEM".split(" ");
+      const drops = [];
+      function initMatrix() {
+        const cols = canvas.width / 20;
+        for (let i = 0; i < cols; i++) drops[i] = 1;
+      }
+      initMatrix();
+      function drawMatrix() {
+        ctx.fillStyle = "rgba(2, 10, 8, 0.06)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#00f7b0";
+        ctx.font = "16px monospace";
+        for (let i = 0; i < drops.length; i++) {
+          let txt = letters[Math.floor(Math.random() * letters.length)];
+          ctx.fillText(txt, i * 22, drops[i] * 20);
+          if (drops[i] * 20 > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+          drops[i]++;
+        }
+      }
+      setInterval(drawMatrix, 55);
+
+      window.onload = function () {
+        initRound();
+      };
+      window.changeDiff = changeDiff;
+      window.useHint = useHint;
+      window.proceedNext = proceedNext;
+      window.restartQuiz = restartQuiz;
+      window.showFact = showFact;
+      window.copyResults = copyResults;
+    </script>
+  </body>
+</html>
